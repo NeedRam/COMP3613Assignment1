@@ -26,21 +26,22 @@ class Student(User):
     def viewHours(self):
         return self.hourRecord
 
-    def viewAccolades(self):
-        return self.accolades
-
     def check_and_unlock_milestones(self):
         all_accolades = Accolade.query.all()
-        unlocked_ids = {a.accoladeID for a in self.accolades}
+        unlocked_ids = {a.id for a in self.accolades}
         new_accolades = []
         for accolade in all_accolades:
-            if self.totalHours >= accolade.milestoneHours and accolade.accoladeID not in unlocked_ids:
+            if self.totalHours >= accolade.milestoneHours and accolade.id not in unlocked_ids:
                 self.accolades.append(accolade)
-                print(f"Congratulations {self.userName}! You unlocked the '{accolade.title}' milestone.")
+                print(f"Congratulations {self.username}! You unlocked the '{accolade.title}' milestone.")
                 new_accolades.append(accolade)
         if new_accolades:
             db.session.commit()
         return new_accolades
+    
+    def viewAccolades(self):
+        self.check_and_unlock_milestones()
+        return self.accolades
     
     def get_json(self):
         return {

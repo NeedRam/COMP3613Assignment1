@@ -3,6 +3,7 @@ from datetime import date
 from flask.cli import with_appcontext, AppGroup
 from rich.console import Console
 from rich.table import Table
+from datetime import datetime
 
 from App.database import db, get_migrate, create_db
 from App.main import create_app
@@ -53,29 +54,26 @@ def init():
 User Commands
 '''
 
-# Commands can be organized using groups
-
-# create a group, it would be the first argument of the comand
-# eg : flask user <command>
 user_cli = AppGroup('user', help='User object commands') 
 
-# Then define the command and any parameters and annotate it with the group (@)
-@user_cli.command("create", help="Creates a user")
-@click.argument("id", default=123456789)
-@click.argument("username", default="rob")
-@click.argument("email", default="rob@example.com")
-@click.argument("password", default="robpass")
-def create_user_command(id, username, email, password):
-    create_user(id, username, email, password)
-    print(f'{username} created!')
+user_cli = AppGroup('student', help='Student object commands') 
 
-# this command will be : flask user create bob bobpass
+@user_cli.command("create", help="Creates a user")
+@click.argument("id")
+@click.argument("username")
+@click.argument("email")
+@click.argument("password")
+def create_user_command(id, username, email, password):
+    user = User(id=id, username=username, email=email, password=password)
+    db.session.add(user)
+    db.session.commit()
+    print(f'{username} created!')
 
 @user_cli.command("list", help="Lists users in the database")
 @click.argument("format", default="string")
 def list_user_command(format):
     if format == 'string':
-        users = get_all_users_json()  # Should return a list of dicts
+        users = get_all_users_json() 
         table = Table(title="User List")
         table.add_column("ID", style="cyan", no_wrap=True)
         table.add_column("Username", style="magenta")
@@ -118,9 +116,9 @@ def search_all_users(query):
 
 @user_cli.command("update", help="Updates user info using ID")
 @click.argument("id")
-@click.option("--username", default=None, help="New username")
-@click.option("--email", default=None, help="New email")
-@click.option("--password", default=None, help="New password")
+@click.option("--username")
+@click.option("--email")
+@click.option("--password")
 def update_user_command(id, username, email, password):
     user = User.query.get(id)
     if not user:
@@ -161,6 +159,176 @@ def drop_user_table_command():
 
 
 app.cli.add_command(user_cli) # add the group to the cli
+
+'''
+Student Commands
+'''
+
+student_cli = AppGroup('student', help='Student object commands') 
+
+@student_cli.command("create", help="Creates a user")
+@click.argument("id")
+@click.argument("username")
+@click.argument("email")
+@click.argument("password")
+def create_student_command(id, username, email, password):
+    student = Student(id=id, username=username, email=email, password=password)
+    db.session.add(student)
+    db.session.commit()
+    print(f'{username} created!')
+
+@student_cli.command("list", help="Lists users in the database")
+@click.argument("format", default="string")
+def list_student_command(format):
+    if format == 'string':
+        students = db.session.scalars(db.select(Student)).all()
+        table = Table(title="Student List")
+        table.add_column("ID", style="cyan", no_wrap=True)
+        table.add_column("Username", style="magenta")
+        table.add_column("Email", style="green")
+        table.add_column("Password", style="red")
+        table.add_column("Total Hours", style="yellow")
+        for student in students:
+            table.add_row(str(student.id), student.username, student.email, student.password, str(student.totalHours))
+        console = Console()
+        console.print(table)
+
+
+@student_cli.command("searchALL", help="Searches ID, username, email or password for a match")
+@click.argument("query")
+def search_all_students(query):
+    students = db.session.scalars(db.select(Student)).all()
+    results = []
+    for student in students:
+        if (
+            query.lower() in str(student.id).lower()
+            or query.lower() in student.username.lower()
+            or query.lower() in student.email.lower()
+            or query.lower() in student.password.lower()
+        ):
+            results.append(student)
+    table = Table(title=f"Student Search Results for '{query}'")
+    table.add_column("ID", style="cyan", no_wrap=True)
+    table.add_column("Username", style="magenta")
+    table.add_column("Email", style="green")
+    table.add_column("Password", style="red")
+    table.add_column("Total Hours", style="yellow")
+    for student in results:
+        table.add_row(str(student.id), student.username, student.email, student.password, str(student.totalHours))
+    console = Console()
+    if results:
+        console.print(table)
+    else:
+        console.print(f"[bold red]No students found matching '{query}'.[/bold red]")
+
+
+
+@student_cli.command("update", help="Updates student info using ID")
+@click.argument("id")
+@click.option("--username")
+@click.option("--email")
+@click.option("--password")
+def update_student_command(id, username, email, password):
+    student = Student.query.get(id)
+    if not student:
+        print(f"Student with id {id} not found.")
+        return
+    updated = False
+    if username:
+        student.username = username
+        updated = True
+    if email:
+        student.email = email
+        updated = True
+    if password:
+        student.set_password(password)
+        updated = True
+    if updated:
+        db.session.commit()
+        print(f"Student {id} updated.")
+    else:
+        print("No changes provided.")
+
+
+@student_cli.command("delete", help="Deletes a student by ID")
+@click.argument("id")
+def delete_student_command(id):
+    student = Student.query.get(id)
+    if not student:
+        print(f"Student with id {id} not found.")
+        return
+    db.session.delete(student)
+    db.session.commit()
+    print(f"Student {id} deleted.")
+
+
+@student_cli.command("dropTable", help="Clears the students table")
+def drop_student_table_command():
+    num_deleted = Student.query.delete()
+    db.session.commit()
+    print(f"Deleted {num_deleted} students from the students table.")
+
+
+@student_cli.command("submitHours", help="Submits hours for a student")
+@click.argument("id")
+@click.argument("hours", type=float)
+@click.argument("date")
+def submit_hours_command(id, hours, date):
+    student = Student.query.get(id)
+    if not student:
+        print(f"Student with id {id} not found.")
+        return
+    try:
+        date_obj = datetime.strptime(date, "%Y-%m-%d").date()
+    except ValueError:
+        print("Date must be in YYYY-MM-DD format.")
+        return
+    record = student.submitHours(hours, date_obj)
+    print(f"Submitted {hours} hours for student {id} on {date} (record id: {record.id}).")
+
+@student_cli.command("viewHours", help="Views all hour records for a student")
+@click.argument("id")
+def view_hours_command(id):
+    student = Student.query.get(id)
+    if not student:
+        print(f"Student with id {id} not found.")
+        return
+    records = student.viewHours()
+    if not records:
+        print(f"No hour records found for student {id}.")
+        return
+    table = Table(title=f"Hour Records for Student {id}")
+    table.add_column("Record ID", style="cyan", no_wrap=True)
+    table.add_column("Date", style="magenta")
+    table.add_column("Hours", style="green")
+    table.add_column("Status", style="yellow")
+    table.add_column("Staff ID", style="red")
+    for record in records:
+        table.add_row(str(record.id), record.date.isoformat(), str(record.hours), record.status, str(record.staffID) if record.staffID else "N/A")
+    console = Console()
+    console.print(table)
+
+@student_cli.command("viewAccolades", help="Views all accolades for a student")
+@click.argument("id")
+def view_accolades_command(id):
+    student = Student.query.get(id)
+    if not student:
+        print(f"Student with id {id} not found.")
+        return
+    accolades = student.viewAccolades()
+    if not accolades:
+        print(f"No accolades found for student {id}.")
+        return
+    table = Table(title=f"Accolades for Student {id}")
+    table.add_column("Accolade ID", style="cyan", no_wrap=True)
+    table.add_column("Title", style="magenta")
+    table.add_column("Milestone Hours", style="green")
+    for accolade in accolades:
+        table.add_row(str(accolade.id), accolade.title, str(accolade.milestoneHours))
+    console = Console()
+    console.print(table)
+
+app.cli.add_command(student_cli) # add the group to the cli
 
 '''
 Test Commands
