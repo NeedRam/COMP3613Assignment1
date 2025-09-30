@@ -206,6 +206,7 @@ $ flask user delete <id>
 ```bash
 $ flask user dropTable
 ```
+## Student Commands
 ```bash
 $ flask student create <id> <username> <email> <password>
 ```
@@ -233,6 +234,37 @@ $ flask student viewHours
 ```bash
 $ flask student viewAccolades
 ```
+
+```bash
+$ flask student viewAccolades
+```
+## Staff Commands
+```bash
+$ flask staff create <id> <username> <email> <password>
+```
+```bash
+$ flask staff list
+```
+```bash
+$ flask staff searchALL <query>
+```
+```bash
+$ flask staff update <id> --username <new_username> --email <new_email> --password <new_password>
+```
+```bash
+$ flask staff delete <id>
+```
+```bash
+$ flask staff logHours <staffID> <studentID> <hours> <date>
+```
+```bash
+$ flask staff approveHours <staffID> <recordID>
+```
+```bash
+$ flask staff manageHours <staffID> <recordID> <hours> <date> <status>
+```
+
+ 
 
 
 

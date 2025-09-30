@@ -21,8 +21,18 @@ class Staff(User):
         record.status = "Approved"
         db.session.commit()
 
-    def manageHours(self):
-        return self.hourRecord
+    def manageHours(self, recordID, hours=None, date=None, status=None):
+        record = HourRecord.query.get(recordID)
+        if not record or record.staffID != self.id:
+            return None
+        if hours is not None:
+            record.hours = hours
+        if date is not None:
+            record.date = date
+        if status is not None:
+            record.status = status
+        db.session.commit()
+        return record
     
     def get_json(self):
         return{

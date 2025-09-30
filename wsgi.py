@@ -53,10 +53,7 @@ def init():
 '''
 User Commands
 '''
-
 user_cli = AppGroup('user', help='User object commands') 
-
-user_cli = AppGroup('student', help='Student object commands') 
 
 @user_cli.command("create", help="Creates a user")
 @click.argument("id")
@@ -86,7 +83,6 @@ def list_user_command(format):
     else:
         print(get_all_users_json())
 
-
 @user_cli.command("searchALL", help="Searches ID, username, email or password for a match")
 @click.argument("query")
 def search_all_users(query):
@@ -112,7 +108,6 @@ def search_all_users(query):
         console.print(table)
     else:
         console.print(f"[bold red]No users found matching '{query}'.[/bold red]")
-
 
 @user_cli.command("update", help="Updates user info using ID")
 @click.argument("id")
@@ -163,7 +158,6 @@ app.cli.add_command(user_cli) # add the group to the cli
 '''
 Student Commands
 '''
-
 student_cli = AppGroup('student', help='Student object commands') 
 
 @student_cli.command("create", help="Creates a user")
@@ -193,7 +187,6 @@ def list_student_command(format):
         console = Console()
         console.print(table)
 
-
 @student_cli.command("searchALL", help="Searches ID, username, email or password for a match")
 @click.argument("query")
 def search_all_students(query):
@@ -221,8 +214,6 @@ def search_all_students(query):
     else:
         console.print(f"[bold red]No students found matching '{query}'.[/bold red]")
 
-
-
 @student_cli.command("update", help="Updates student info using ID")
 @click.argument("id")
 @click.option("--username")
@@ -249,7 +240,6 @@ def update_student_command(id, username, email, password):
     else:
         print("No changes provided.")
 
-
 @student_cli.command("delete", help="Deletes a student by ID")
 @click.argument("id")
 def delete_student_command(id):
@@ -261,13 +251,11 @@ def delete_student_command(id):
     db.session.commit()
     print(f"Student {id} deleted.")
 
-
 @student_cli.command("dropTable", help="Clears the students table")
 def drop_student_table_command():
     num_deleted = Student.query.delete()
     db.session.commit()
     print(f"Deleted {num_deleted} students from the students table.")
-
 
 @student_cli.command("submitHours", help="Submits hours for a student")
 @click.argument("id")
@@ -329,6 +317,177 @@ def view_accolades_command(id):
     console.print(table)
 
 app.cli.add_command(student_cli) # add the group to the cli
+
+'''
+Staff Commands
+'''
+staff_cli = AppGroup('staff', help='Staff object commands')
+
+@staff_cli.command("create", help="Creates a staff member")
+@click.argument("id")
+@click.argument("username")
+@click.argument("email")
+@click.argument("password")
+def create_staff_command(id, username, email, password):
+    staff = Staff(id=id, username=username, email=email, password=password)
+    db.session.add(staff)
+    db.session.commit()
+    print(f'{username} created!')
+
+@staff_cli.command("list", help="Lists staff in the database")
+@click.argument("format", default="string")
+def list_staff_command(format):
+    if format == 'string':
+        stafvs = db.session.scalars(db.select(Staff)).all()
+        table = Table(title="Staff List")
+        table.add_column("ID", style="cyan", no_wrap=True)
+        table.add_column("Username", style="magenta")
+        table.add_column("Email", style="green")
+        table.add_column("Password", style="red")
+        for staff in stafvs:
+            table.add_row(str(staff.id), staff.username, staff.email, staff.password)
+        console = Console()
+        console.print(table)
+
+@staff_cli.command("searchALL", help="Searches ID, username, email or password for a match")
+@click.argument("query")
+def search_all_staff(query):
+    stafvs = db.session.scalars(db.select(Staff)).all()
+    results = []
+    for staff in stafvs:
+        if (
+            query.lower() in str(staff.id).lower()
+            or query.lower() in staff.username.lower()
+            or query.lower() in staff.email.lower()
+            or query.lower() in staff.password.lower()
+        ):
+            results.append(staff)
+    table = Table(title=f"Staff Search Results for '{query}'")
+    table.add_column("ID", style="cyan", no_wrap=True)
+    table.add_column("Username", style="magenta")
+    table.add_column("Email", style="green")
+    table.add_column("Password", style="red")
+    for staff in results:
+        table.add_row(str(staff.id), staff.username, staff.email, staff.password)
+    console = Console()
+    if results:
+        console.print(table)
+    else:
+        console.print(f"[bold red]No staff found matching '{query}'.[/bold red]")
+
+@staff_cli.command("update", help="Updates staff info using ID")
+@click.argument("id")
+@click.option("--username")
+@click.option("--email")
+@click.option("--password")
+def update_staff_command(id, username, email, password):
+    staff = Staff.query.get(id)
+    if not staff:
+        print(f"Staff with id {id} not found.")
+        return
+    updated = False
+    if username:
+        staff.username = username
+        updated = True
+    if email:
+        staff.email = email
+        updated = True
+    if password:
+        staff.set_password(password)
+        updated = True
+    if updated:
+        db.session.commit()
+        print(f"Staff {id} updated.")
+    else:
+        print("No changes provided.")
+
+@staff_cli.command("delete", help="Deletes a staff member by ID")
+@click.argument("id")
+def delete_staff_command(id):
+    staff = Staff.query.get(id)
+    if not staff:
+        print(f"Staff with id {id} not found.")
+        return
+    db.session.delete(staff)
+    db.session.commit()
+    print(f"Staff {id} deleted.")
+
+@staff_cli.command("dropTable", help="Clears the staff table")
+def drop_staff_table_command():
+    num_deleted = Staff.query.delete()
+    db.session.commit()
+    print(f"Deleted {num_deleted} staff members from the staff table.")
+
+@staff_cli.command("logHours", help="Logs hours for a student")
+@click.argument("staffID")
+@click.argument("studentID")
+@click.argument("hours", type=float)
+@click.argument("date")
+def log_hours_command(staffID, studentID, hours, date):
+    staff = Staff.query.get(staffID)
+    if not staff:
+        print(f"Staff with id {staffID} not found.")
+        return
+    student = Student.query.get(studentID)
+    if not student:
+        print(f"Student with id {studentID} not found.")
+        return
+    try:
+        date_obj = datetime.strptime(date, "%Y-%m-%d").date()
+    except ValueError:
+        print("Date must be in YYYY-MM-DD format.")
+        return
+    record = staff.logHours(student, hours, date_obj)
+    print(f"Logged {hours} hours for student {studentID} on {date} (record ID: {record.id}).")
+
+@staff_cli.command("approveHours", help="Approves a student's hour record")
+@click.argument("staffID")
+@click.argument("recordID", type=int)
+def approve_hours_command(staffID, recordID):
+    staff = Staff.query.get(staffID)
+    if not staff:
+        print(f"Staff with id {staffID} not found.")
+        return
+    record = HourRecord.query.get(recordID)
+    if not record:
+        print(f"Hour record with id {recordID} not found.")
+        return
+    if record.status == "Approved":
+        print(f"Hour record {recordID} is already approved.")
+        return
+    staff.approveHours(record)
+    print(f"Hour record {recordID} approved by staff {staffID}.")
+
+flask staff manage-hours <staff_id>
+@staff_cli.command("manageHours", help="Manages a student's hour record")
+@click.argument("staffID")
+@click.argument("recordID", type=int)
+@click.option("--hours", type=float)
+@click.option("--date")
+@click.option("--status")
+def manage_hours_command(staffID, recordID, hours, date, status):
+    staff = Staff.query.get(staffID)
+    if not staff:
+        print(f"Staff with id {staffID} not found.")
+        return
+    date_obj = None
+    if date:
+        try:
+            date_obj = datetime.strptime(date, "%Y-%m-%d").date()
+        except ValueError:
+            print("Date must be in YYYY-MM-DD format.")
+            return
+    record = staff.manageHours(recordID, hours=hours, date=date_obj, status=status)
+    if not record:
+        print(f"Hour record with id {recordID} not found or you do not have permission to manage it.")
+        return
+    print(f"Hour record {recordID} updated by staff {staffID}.")
+
+
+app.cli.add_command(staff_cli) # add the group to the cli
+
+
+
 
 '''
 Test Commands
