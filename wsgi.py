@@ -1,6 +1,8 @@
 import click, pytest, sys, unittest
 from datetime import date
 from flask.cli import with_appcontext, AppGroup
+from rich.console import Console
+from rich.table import Table
 
 from App.database import db, get_migrate, create_db
 from App.main import create_app
@@ -59,10 +61,12 @@ user_cli = AppGroup('user', help='User object commands')
 
 # Then define the command and any parameters and annotate it with the group (@)
 @user_cli.command("create", help="Creates a user")
+@click.argument("id", default=123456789)
 @click.argument("username", default="rob")
+@click.argument("email", default="rob@example.com")
 @click.argument("password", default="robpass")
-def create_user_command(username, password):
-    create_user(username, password)
+def create_user_command(id, username, email, password):
+    create_user(id, username, email, password)
     print(f'{username} created!')
 
 # this command will be : flask user create bob bobpass
@@ -71,9 +75,90 @@ def create_user_command(username, password):
 @click.argument("format", default="string")
 def list_user_command(format):
     if format == 'string':
-        print(get_all_users())
+        users = get_all_users_json()  # Should return a list of dicts
+        table = Table(title="User List")
+        table.add_column("ID", style="cyan", no_wrap=True)
+        table.add_column("Username", style="magenta")
+        table.add_column("Email", style="green")
+        table.add_column("Password", style="red")
+        for user in users:
+            table.add_row(str(user['id']), user['username'], user['email'], user['password'])
+        console = Console()
+        console.print(table)
     else:
         print(get_all_users_json())
+
+
+@user_cli.command("searchALL", help="Searches ID, username, email or password for a match")
+@click.argument("query")
+def search_all_users(query):
+    users = get_all_users_json()
+    results = []
+    for user in users:
+        if (
+            query.lower() in str(user['id']).lower()
+            or query.lower() in user['username'].lower()
+            or query.lower() in user['email'].lower()
+            or query.lower() in user['password'].lower()
+        ):
+            results.append(user)
+    table = Table(title=f"User Search Results for '{query}'")
+    table.add_column("ID", style="cyan", no_wrap=True)
+    table.add_column("Username", style="magenta")
+    table.add_column("Email", style="green")
+    table.add_column("Password", style="red")
+    for user in results:
+        table.add_row(str(user['id']), user['username'], user['email'], user['password'])
+    console = Console()
+    if results:
+        console.print(table)
+    else:
+        console.print(f"[bold red]No users found matching '{query}'.[/bold red]")
+
+
+@user_cli.command("update", help="Updates user info using ID")
+@click.argument("id")
+@click.option("--username", default=None, help="New username")
+@click.option("--email", default=None, help="New email")
+@click.option("--password", default=None, help="New password")
+def update_user_command(id, username, email, password):
+    user = User.query.get(id)
+    if not user:
+        print(f"User with id {id} not found.")
+        return
+    updated = False
+    if username:
+        user.username = username
+        updated = True
+    if email:
+        user.email = email
+        updated = True
+    if password:
+        user.set_password(password)
+        updated = True
+    if updated:
+        db.session.commit()
+        print(f"User {id} updated.")
+    else:
+        print("No changes provided.")
+
+@user_cli.command("delete", help="Deletes a user by ID")
+@click.argument("id")
+def delete_user_command(id):
+    user = User.query.get(id)
+    if not user:
+        print(f"User with id {id} not found.")
+        return
+    db.session.delete(user)
+    db.session.commit()
+    print(f"User {id} deleted.")
+
+@user_cli.command("dropTable", help="Clears the users table")
+def drop_user_table_command():
+    num_deleted = User.query.delete()
+    db.session.commit()
+    print(f"Deleted {num_deleted} users from the users table.")
+
 
 app.cli.add_command(user_cli) # add the group to the cli
 

@@ -186,3 +186,35 @@ If you are running into errors in gitpod when updateding your github actions fil
 ## Database Issues
 
 If you are adding models you may need to migrate the database with the commands given in the previous database migration section. Alternateively you can delete you database file.
+
+## User Commands
+```bash
+$ flask user create <id> <username> <email> <password>
+```
+```bash
+$ flask user list
+```
+```bash
+$ flask user searchALL <query>
+```
+```bash
+$ flask user update <id> --username <new_username> --email <new_email> --password <new_password>
+```
+```bash
+$ flask user delete <id>
+```
+```bash
+$ flask user dropTable
+```
+```bash
+$ flask user 
+```
+```bash
+$ flask user 
+```
+```bash
+$ flask user 
+```
+
+
+
