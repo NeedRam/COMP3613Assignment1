@@ -187,242 +187,246 @@ If you are running into errors in gitpod when updateding your github actions fil
 
 If you are adding models you may need to migrate the database with the commands given in the previous database migration section. Alternateively you can delete you database file.
 
-## User Commands
+# User Commands
 
-# Create a user
+## Create a user
 ```bash
 $ flask user create <id> <username> <email> <password>
 ```
 
-# List all users
+## List all users
 ```bash
 $ flask user list
 ```
 
-# Search users by ID, username, email, or password
+## Search users by ID, username, email, or password
 ```bash
 $ flask user searchALL <query>
 ```
 
-# Update a user by ID (any combination of fields)
+## Update a user by ID (any combination of fields)
 ```bash
 $ flask user update <id> [--username <new_username>] [--email <new_email>] [--password <new_password>]
 ```
 
-# Delete a user by ID
+## Delete a user by ID
 ```bash
 $ flask user delete <id>
 ```
 
-# Drop (clear) the users table
+## Drop (clear) the users table
 ```bash
 $ flask user dropTable
 ```
 
 
-## Student Commands
+# Student Commands
 
-# Create a student
+## Create a student
 ```bash
 $ flask student create <id> <username> <email> <password>
 ```
 
-# List all students
+## List all students
 ```bash
 $ flask student list
 ```
 
-# Search students by ID, username, email, or password
+## Search students by ID, username, email, or password
 ```bash
 $ flask student searchALL <query>
 ```
 
-# Update a student by ID (any combination of fields)
+## Update a student by ID (any combination of fields)
 ```bash
 $ flask student update <id> [--username <new_username>] [--email <new_email>] [--password <new_password>]
 ```
 
-# Delete a student by ID
+## Delete a student by ID
 ```bash
 $ flask student delete <id>
 ```
 
-# Drop (clear) the students table
+## Drop (clear) the students table
 ```bash
 $ flask student dropTable
 ```
 
-# Submit hours for a student, date format: YYYY-MM-DD
+## Submit hours for a student, date format: YYYY-MM-DD
 ```bash
 $ flask student submitHours <id> <hours> <date>
 ```
 
-# View all hour records for a student
+## View all hour records for a student
 ```bash
 $ flask student viewHours <id>
 ```
 
-# View all accolades for a student
+## View all accolades for a student
 ```bash
 $ flask student viewAccolades <id>
 ```
 
 
-## Staff Commands
+# Staff Commands
 
-# Create a staff member
+## Create a staff member
 ```bash
 $ flask staff create <id> <username> <email> <password>
 ```
 
-# List all staff
+## List all staff
 ```bash
 $ flask staff list
 ```
 
-# Search staff by ID, username, email, or password
+## Search staff by ID, username, email, or password
 ```bash
 $ flask staff searchALL <query>
 ```
 
-# Update a staff member by ID (any combination of fields)
+## Update a staff member by ID (any combination of fields)
 ```bash
 $ flask staff update <id> [--username <new_username>] [--email <new_email>] [--password <new_password>]
 ```
 
-# Delete a staff member by ID
+## Delete a staff member by ID
 ```bash
 $ flask staff delete <id>
 ```
 
-# Drop (clear) the staff table
+## Drop (clear) the staff table
 ```bash
 $ flask staff dropTable
 ```
 
-# Log hours for a student (by staff)
+## Log hours for a student (by staff)
 ```bash
 $ flask staff logHours <staffID> <studentID> <hours> <date>
 ```
 
-# Approve a student's hour record
+## Approve a student's hour record
 ```bash
 $ flask staff approveHours <staffID> <recordID>
 ```
 
-# Manage (edit) a student's hour record
+## Manage (edit) a student's hour record
 ```bash
 $ flask staff manageHours <staffID> <recordID> [--hours <hours>] [--date <date>] [--status <status>]
 ```
 
 
-## Hour Record Commands
+# Hour Record Commands
 
-# Create an hour record, date format: YYYY-MM-DD
+## Create an hour record, date format: YYYY-MM-DD
 ```bash
 $ flask hourRecord create <studentID> <hours> <date> <status> [--staffID <staffID>]
 ```
 
-# List all hour records
+## List all hour records
 ```bash
 $ flask hourRecord list
 ```
 
-# Search hour records by student ID
+## Search hour records by student ID
 ```bash
 $ flask hourRecord searchByStudentID <studentID>
 ```
 
-# Search hour records by staff ID
+## Search hour records by staff ID
 ```bash
 $ flask hourRecord searchByStaffID <staffID>
 ```
 
-# Search hour records by date, date format: YYYY-MM-DD
+## Search hour records by date, date format: YYYY-MM-DD
 ```bash
 $ flask hourRecord searchByDate <date> 
 ```
 
-# Search hour records by status
+## Search hour records by status
 ```bash
 $ flask hourRecord searchByStatus <status>
 ```
 
-# Approve an hour record by ID (as staff)
+## Approve an hour record by ID (as staff)
 ```bash
 $ flask hourRecord approve <id> <staffID>
 ```
 
-# Reject an hour record by ID (as staff)
+## Reject an hour record by ID (as staff)
 ```bash
 $ flask hourRecord reject <id> <staffID>
 ```
 
-# Update an hour record by ID (any combination of fields)
+## Update an hour record by ID (any combination of fields)
 ```bash
 $ flask hourRecord update <id> [--studentID <studentID>] [--hours <hours>] [--date <date>] [--status <status>] [--staffID <staffID>]
 ```
 
-# Delete an hour record by ID
+## Delete an hour record by ID
 ```bash
 $ flask hourRecord delete <id>
 ```
 
-# Drop (clear) the hour records table
+## Drop (clear) the hour records table
 ```bash
 $ flask hourRecord dropTable
 ```
 
 
-## Hour Record Commands
+# Hour Record Commands
 
-# Create an accolade
+## Create an accolade
 ```bash
 $ flask accolade create <title> <milestoneHours>
 ```
 
-# List all accolades
+## List all accolades
 ```bash
 $ flask accolade list
 ```
 
-# Update an accolade by ID
+## Update an accolade by ID
 ```bash
 $ flask accolade update <id> [--title <title>] [--milestoneHours <hours>]
 ```
 
-# Delete an accolade by ID
+## Delete an accolade by ID
 ```bash
 $ flask accolade delete <id>
 ```
 
-# Delete all accolades from the table.
+## Delete all accolades from the table.
 ```bash
 $ flask accolade dropTable
 ```
 
 
-## Leaderboard Commands
+# Leaderboard Commands
 
-# List all students in leaderboard
+## List all students in leaderboard
 ```bash
 $ flask leaderboard list
 ```
 
-# Refresh leaderboard rankings
+## Refresh leaderboard rankings
 ```bash
 $ flask leaderboard refresh
 ```
 
-# Search leaderboard by student ID, username, email, or password
+## Search leaderboard by student ID, username, email, or password
 ```bash
 $ flask leaderboard searchALL <query>
 ```
 
-# Delete all entries from the leaderboard table
+## Delete all entries from the leaderboard table
 ```bash
 $ flask leaderboard dropTable
 ```
+
+
+
+
 
 
 
