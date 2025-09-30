@@ -1,5 +1,6 @@
 from App.database import db
 from App.models.user import User
+from App.models.hourRecord import HourRecord
 
 class Staff(User):
     __tablename__ = "staff"
@@ -11,7 +12,6 @@ class Staff(User):
     hour_records = db.relationship("HourRecord", back_populates="staff")
 
     def logHours(self, student, hours, date):
-        from App.models.hour_record import HourRecord
         record = HourRecord(studentID=student.userID, staffID=self.userID, hours=hours, date=date, status="Approved")
         db.session.add(record)
         db.session.commit()
