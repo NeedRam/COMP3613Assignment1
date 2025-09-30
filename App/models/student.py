@@ -10,12 +10,12 @@ class Student(User):
     id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
 
     user = db.relationship("User", back_populates="student")
-    hourRecords = db.relationship("HourRecord", back_populates="student", cascade="all, delete-orphan")
+    hourRecord = db.relationship("HourRecord", back_populates="student", cascade="all, delete-orphan")
     accolades = db.relationship("Accolade", secondary=student_accolades, backref="students")
 
     @property
     def totalHours(self):
-        return sum(hr.hours for hr in self.hour_records if hr.status == "Approved")
+        return sum(hr.hours for hr in self.hourRecord if hr.status == "Approved")
 
     def submitHours(self, hours, date):
         record = HourRecord(studentID=self.id, hours=hours, date=date, status="Pending")
@@ -24,7 +24,7 @@ class Student(User):
         return record
 
     def viewHours(self):
-        return self.hour_records
+        return self.hourRecord
 
     def viewAccolades(self):
         return self.accolades

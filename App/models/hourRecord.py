@@ -2,7 +2,7 @@ from App.database import db
 import datetime
 
 class HourRecord(db.Model):
-    __tablename__ = "hour_records"
+    __tablename__ = "hourRecord"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     date = db.Column(db.Date, default=datetime.date.today, nullable=False)
@@ -12,8 +12,8 @@ class HourRecord(db.Model):
     studentID = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
     staffID = db.Column(db.Integer, db.ForeignKey("staff.id"), nullable=True)  # Staff who approved/logged
 
-    student = db.relationship("Student", back_populates="hour_records")
-    staff = db.relationship("Staff", back_populates="hour_records")
+    student = db.relationship("Student", back_populates="hourRecord")
+    staff = db.relationship("Staff", back_populates="hourRecord")
 
     def __init__(self, studentID, hours, date=None, status="Pending", staffID=None):
         self.studentID = studentID

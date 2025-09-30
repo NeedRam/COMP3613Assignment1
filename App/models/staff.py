@@ -9,7 +9,7 @@ class Staff(User):
     id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
     
     user = db.relationship("User", back_populates="staff")
-    hour_records = db.relationship("HourRecord", back_populates="staff")
+    hourRecord = db.relationship("HourRecord", back_populates="staff")
 
     def logHours(self, student, hours, date):
         record = HourRecord(studentID=student.id, staffID=self.id, hours=hours, date=date, status="Approved")
@@ -22,7 +22,7 @@ class Staff(User):
         db.session.commit()
 
     def manageHours(self):
-        return self.hour_records
+        return self.hourRecord
     
     def get_json(self):
         return{
