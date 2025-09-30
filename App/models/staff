@@ -1,0 +1,28 @@
+from App.database import db
+from App.models.user import User
+
+class Staff(User):
+    __tablename__ = "staff"
+    __mapper_args__ = {"polymorphic_identity": "staff"}
+
+    userID = db.Column(db.Integer, db.ForeignKey("users.userID"), primary_key=True)
+    
+    user = db.relationship("User", back_populates="staff")
+    hour_records = db.relationship("HourRecord", back_populates="staff")
+
+    def logHours(self, student, hours, date):
+        from App.models.hour_record import HourRecord
+        record = HourRecord(studentID=student.userID, staffID=self.userID, hours=hours, date=date, status="Approved")
+        db.session.add(record)
+        db.session.commit()
+        return record
+
+    def approveHours(self, record):
+        record.status = "Approved"
+        db.session.commit()
+
+    def manageHours(self):
+        return self.hour_records
+
+    def __repr__(self):
+        return f"<Staff {self.userName}>"
