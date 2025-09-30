@@ -18,8 +18,6 @@ class User(db.Model):
         self.email = email
         self.password = password
 
-    
-
     def set_password(self, password):
         """Create hashed password."""
         self.password = generate_password_hash(password)
