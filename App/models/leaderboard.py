@@ -1,4 +1,5 @@
 from App.database import db
+from App.models.student import Student
 
 class Leaderboard(db.Model):
     __tablename__ = "leaderboard"
@@ -15,7 +16,6 @@ class Leaderboard(db.Model):
 
     @staticmethod
     def updateRanking():
-        from App.models.student import Student
 
         # Clear leaderboard
         Leaderboard.query.delete()
