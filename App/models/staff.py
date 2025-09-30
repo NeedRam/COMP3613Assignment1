@@ -6,13 +6,13 @@ class Staff(User):
     __tablename__ = "staff"
     __mapper_args__ = {"polymorphic_identity": "staff"}
 
-    userID = db.Column(db.Integer, db.ForeignKey("users.userID"), primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
     
     user = db.relationship("User", back_populates="staff")
     hour_records = db.relationship("HourRecord", back_populates="staff")
 
     def logHours(self, student, hours, date):
-        record = HourRecord(studentID=student.userID, staffID=self.userID, hours=hours, date=date, status="Approved")
+        record = HourRecord(studentID=student.id, staffID=self.id, hours=hours, date=date, status="Approved")
         db.session.add(record)
         db.session.commit()
         return record
@@ -23,6 +23,14 @@ class Staff(User):
 
     def manageHours(self):
         return self.hour_records
+    
+    def get_json(self):
+        return{
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'password': self.password       
+        }
 
     def __repr__(self):
-        return f"<Staff {self.userName}>"
+        return f"<ID: {self.id}, Username: {self.username}, Email: {self.email}, Password: {self.password}>"

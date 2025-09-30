@@ -3,8 +3,8 @@ from App.database import db
 class Leaderboard(db.Model):
     __tablename__ = "leaderboard"
 
-    leaderboardID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    studentID = db.Column(db.Integer, db.ForeignKey("students.userID"), nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    studentID = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
     rank = db.Column(db.Integer, nullable=False)
 
     student = db.relationship("Student")
@@ -27,11 +27,18 @@ class Leaderboard(db.Model):
         # Assign new ranks
         rank = 1
         for student in students:
-            entry = Leaderboard(studentID=student.userID, rank=rank)
+            entry = Leaderboard(studentID=student.id, rank=rank)
             db.session.add(entry)
             rank += 1
 
         db.session.commit()
 
+    def get_json(self):
+        return {
+            'id': self.id,
+            'studentID': self.studentID,
+            'rank': self.rank
+        }
+
     def __repr__(self):
-        return f"<Leaderboard Rank={self.studentID}, Rank={self.rank}>"
+        return f"<ID: {self.id}, StudentID: {self.studentID}, Rank: {self.rank}>"

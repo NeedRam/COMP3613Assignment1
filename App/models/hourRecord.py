@@ -4,13 +4,13 @@ import datetime
 class HourRecord(db.Model):
     __tablename__ = "hour_records"
 
-    recordID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     date = db.Column(db.Date, default=datetime.date.today, nullable=False)
     hours = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(50), default="Pending", nullable=False)
 
-    studentID = db.Column(db.Integer, db.ForeignKey("students.userID"), nullable=False)
-    staffID = db.Column(db.Integer, db.ForeignKey("staff.userID"), nullable=True)  # Staff who approved/logged
+    studentID = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
+    staffID = db.Column(db.Integer, db.ForeignKey("staff.id"), nullable=True)  # Staff who approved/logged
 
     student = db.relationship("Student", back_populates="hour_records")
     staff = db.relationship("Staff", back_populates="hour_records")
@@ -32,5 +32,15 @@ class HourRecord(db.Model):
         self.staffID = staffID
         db.session.commit()
 
+    def get_json(self):
+        return {
+            'id': self.id,
+            'date': self.date.isoformat(),
+            'hours': self.hours,
+            'status': self.status,
+            'studentID': self.studentID,
+            'staffID': self.staffID
+        }
+
     def __repr__(self):
-        return f"<HourRecord ID={self.recordID}, Student={self.studentID}, Hours={self.hours}, Status={self.status}>"
+        return f"<ID: {self.id}, StudentID: {self.studentID}, Date: {self.date} Hours: {self.hours}, Status: {self.status}, StudentID: {self.studentID}, StaffID: {self.staffID}>"

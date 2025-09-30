@@ -7,10 +7,10 @@ class Student(User):
     __tablename__ = "students"
     __mapper_args__ = {"polymorphic_identity": "student"}
 
-    userID = db.Column(db.Integer, db.ForeignKey("users.userID"), primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
 
     user = db.relationship("User", back_populates="student")
-    hour_records = db.relationship("HourRecord", back_populates="student", cascade="all, delete-orphan")
+    hourRecords = db.relationship("HourRecord", back_populates="student", cascade="all, delete-orphan")
     accolades = db.relationship("Accolade", secondary=student_accolades, backref="students")
 
     @property
@@ -18,7 +18,7 @@ class Student(User):
         return sum(hr.hours for hr in self.hour_records if hr.status == "Approved")
 
     def submitHours(self, hours, date):
-        record = HourRecord(studentID=self.userID, hours=hours, date=date, status="Pending")
+        record = HourRecord(studentID=self.id, hours=hours, date=date, status="Pending")
         db.session.add(record)
         db.session.commit()
         return record
@@ -41,6 +41,15 @@ class Student(User):
         if new_accolades:
             db.session.commit()
         return new_accolades
+    
+    def get_json(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'password': self.password,
+            'totalHours': self.totalHours     
+        }
 
     def __repr__(self):
-        return f"<Student {self.userName}, Hours: {self.totalHours}>"
+        return f"<ID: {self.id}, Username: {self.username}, Email: {self.email}, Password: {self.password}, Total Hours: {self.totalHours}>"
