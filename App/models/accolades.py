@@ -2,8 +2,8 @@ from App.database import db
 
 student_accolades = db.Table(
     "student_accolades",
-    db.Column("student_id", db.Integer, db.ForeignKey("students.id"), primary_key=True),
-    db.Column("accolade_id", db.Integer, db.ForeignKey("accolades.id"), primary_key=True)
+    db.Column("studentID", db.Integer, db.ForeignKey("students.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("accoladeID", db.Integer, db.ForeignKey("accolades.id", ondelete="CASCADE"), primary_key=True)
 )
 
 class Accolade(db.Model):

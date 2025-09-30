@@ -9,9 +9,6 @@ class User(db.Model):
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
 
-    student = db.relationship("Student", uselist=False, back_populates="user")
-    staff = db.relationship("Staff", uselist=False, back_populates="user")
-
     def __init__(self, id, username, email, password):
         self.id = id
         self.username = username

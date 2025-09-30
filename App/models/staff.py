@@ -8,7 +8,6 @@ class Staff(User):
 
     id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
     
-    user = db.relationship("User", back_populates="staff")
     hourRecord = db.relationship("HourRecord", back_populates="staff")
 
     def logHours(self, student, hours, date):

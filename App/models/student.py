@@ -9,9 +9,8 @@ class Student(User):
 
     id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
 
-    user = db.relationship("User", back_populates="student")
     hourRecord = db.relationship("HourRecord", back_populates="student", cascade="all, delete-orphan")
-    accolades = db.relationship("Accolade", secondary=student_accolades, backref="students")
+    accolades = db.relationship("Accolade", secondary=student_accolades, backref="students", passive_deletes=True)
 
     @property
     def totalHours(self):
