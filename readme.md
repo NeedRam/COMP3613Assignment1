@@ -409,14 +409,14 @@ $ flask accolade dropTable
 
 # Leaderboard Commands
 
-### List all students in leaderboard
-```bash
-$ flask leaderboard list
-```
-
 ### Refresh leaderboard rankings
 ```bash
 $ flask leaderboard refresh
+```
+
+### List all students in leaderboard
+```bash
+$ flask leaderboard list
 ```
 
 ### Search leaderboard by student ID or username
