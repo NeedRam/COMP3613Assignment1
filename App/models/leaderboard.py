@@ -22,7 +22,9 @@ class Leaderboard(db.Model):
         db.session.commit()
 
         # Get students ordered by hours (descending)
-        students = Student.query.order_by(Student.totalHours.desc()).all()
+        students = Student.query.all()
+        students.sort(key=lambda s: s.total_hours, reverse=True)
+
 
         # Assign new ranks
         rank = 1

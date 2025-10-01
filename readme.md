@@ -419,7 +419,7 @@ $ flask leaderboard list
 $ flask leaderboard refresh
 ```
 
-### Search leaderboard by student ID, username, email, or password
+### Search leaderboard by student ID or username
 ```bash
 $ flask leaderboard searchALL <query>
 ```

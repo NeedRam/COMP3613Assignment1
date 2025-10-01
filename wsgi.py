@@ -182,7 +182,7 @@ def list_student_command(format):
         table.add_column("Password", style="red")
         table.add_column("Total Hours", style="yellow")
         for student in students:
-            table.add_row(str(student.id), student.username, student.email, student.password, str(student.totalHours))
+            table.add_row(str(student.id), student.username, student.email, student.password, str(student.total_hours))
         console = Console()
         console.print(table)
 
@@ -206,7 +206,7 @@ def search_all_students(query):
     table.add_column("Password", style="red")
     table.add_column("Total Hours", style="yellow")
     for student in results:
-        table.add_row(str(student.id), student.username, student.email, student.password, str(student.totalHours))
+        table.add_row(str(student.id), student.username, student.email, student.password, str(student.total_hours))
     console = Console()
     if results:
         console.print(table)
@@ -786,6 +786,11 @@ Leaderboard Commands
 '''
 leaderboard_cli = AppGroup('leaderboard', help='Leaderboard object commands')
 
+@leaderboard_cli.command("refresh", help="Refreshes the leaderboard")
+def refresh_leaderboard_command():
+    Leaderboard.updateRanking()
+    print("Leaderboard refreshed")
+
 @leaderboard_cli.command("list", help="Lists the leaderboard")
 @click.argument("format", default="string")
 def list_leaderboard_command(format):
@@ -799,14 +804,9 @@ def list_leaderboard_command(format):
         for entry in leaderboard:
             student = Student.query.get(entry.student_id)
             username = student.username if student else "N/A"
-            table.add_row(str(entry.rank), str(entry.student_id), username, str(entry.totalHours))
+            table.add_row(str(entry.rank), str(entry.student_id), entry.student.username, str(entry.student.total_hours))
         console = Console()
         console.print(table)
-
-@leaderboard_cli.command("refresh", help="Refreshes the leaderboard")
-def refresh_leaderboard_command():
-    Leaderboard.updateRanking()
-    print("Leaderboard refreshed")
 
 @leaderboard_cli.command("searchALL", help="Searches student ID or username for a match in the leaderboard")
 @click.argument("query")
@@ -827,7 +827,7 @@ def search_all_leaderboard(query):
     table.add_column("Username", style="green")
     table.add_column("Total Hours", style="yellow")
     for entry, username in results:
-        table.add_row(str(entry.rank), str(entry.student_id), username, str(entry.totalHours))
+        table.add_row(str(entry.rank), str(entry.student_id), entry.student.username, str(entry.student.total_hours))
     console = Console()
     if results:
         console.print(table)

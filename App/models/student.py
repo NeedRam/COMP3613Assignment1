@@ -13,7 +13,7 @@ class Student(User):
     accolades = db.relationship("Accolade", secondary=student_accolades, backref="students", passive_deletes=True)
 
     @property
-    def totalHours(self):
+    def total_hours(self):
         return sum(hr.hours for hr in self.hourRecord if hr.status == "Approved")
 
     def submitHours(self, hours, date):
@@ -30,7 +30,7 @@ class Student(User):
         unlocked_ids = {a.id for a in self.accolades}
         new_accolades = []
         for accolade in all_accolades:
-            if self.totalHours >= accolade.milestone_hours and accolade.id not in unlocked_ids:
+            if self.total_hours >= accolade.milestone_hours and accolade.id not in unlocked_ids:
                 self.accolades.append(accolade)
                 print(f"Congratulations {self.username}! You unlocked the '{accolade.title}' milestone.")
                 new_accolades.append(accolade)
@@ -48,8 +48,8 @@ class Student(User):
             'username': self.username,
             'email': self.email,
             'password': self.password,
-            'totalHours': self.totalHours     
+            'total_hours': self.total_hours     
         }
 
     def __repr__(self):
-        return f"<ID: {self.id}, Username: {self.username}, Email: {self.email}, Password: {self.password}, Total Hours: {self.totalHours}>"
+        return f"<ID: {self.id}, Username: {self.username}, Email: {self.email}, Password: {self.password}, Total Hours: {self.total_hours}>"
