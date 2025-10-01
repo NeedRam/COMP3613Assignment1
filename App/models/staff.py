@@ -26,7 +26,7 @@ class Staff(User):
 
     def manageHours(self, record_id, hours=None, date=None, status=None):
         record = HourRecord.query.get(record_id)
-        if not record or record.staff_id != self.id:
+        if not record:
             return None
         if hours is not None:
             record.hours = hours
@@ -34,6 +34,7 @@ class Staff(User):
             record.date = date
         if status is not None:
             record.status = status
+        record.staff_id = self.id
         db.session.commit()
         return record
     
