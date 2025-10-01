@@ -302,22 +302,22 @@ $ flask staff dropTable
 
 ### Log hours for a student (by staff)
 ```bash
-$ flask staff logHours <staffID> <studentID> <hours> <date>
+$ flask staff logHours <staff_id> <student_id> <hours> <date>
 ```
 
 ### Approve a student's hour record
 ```bash
-$ flask staff approveHours <staffID> <recordID>
+$ flask staff approveHours <staff_id> <record_id>
 ```
 
 ### Reject a student's hour record
 ```bash
-$ flask staff rejectHours <staffID> <recordID>
+$ flask staff rejectHours <staff_id> <recordID>
 ```
 
 ### Manage (edit) a student's hour record
 ```bash
-$ flask staff manageHours <staffID> <recordID> [--hours <hours>] [--date <date>] [--status <status>]
+$ flask staff manageHours <staff_id> <recordID> [--hours <hours>] [--date <date>] [--status <status>]
 ```
 
 
@@ -325,7 +325,7 @@ $ flask staff manageHours <staffID> <recordID> [--hours <hours>] [--date <date>]
 
 ### Create an hour record, date format: YYYY-MM-DD
 ```bash
-$ flask hourRecord create <studentID> <hours> <date> <status> [--staffID <staffID>]
+$ flask hourRecord create <student_id> <hours> <date> <status> [--staff_id <staff_id>]
 ```
 
 ### List all hour records
@@ -335,12 +335,12 @@ $ flask hourRecord list
 
 ### Search hour records by student ID
 ```bash
-$ flask hourRecord searchByStudentID <studentID>
+$ flask hourRecord searchByStudentID <student_id>
 ```
 
 ### Search hour records by staff ID
 ```bash
-$ flask hourRecord searchByStaffID <staffID>
+$ flask hourRecord searchByStaffID <staff_id>
 ```
 
 ### Search hour records by date, date format: YYYY-MM-DD
@@ -355,17 +355,17 @@ $ flask hourRecord searchByStatus <status>
 
 ### Approve an hour record by ID (as staff)
 ```bash
-$ flask hourRecord approve <id> <staffID>
+$ flask hourRecord approve <id> <staff_id>
 ```
 
 ### Reject an hour record by ID (as staff)
 ```bash
-$ flask hourRecord reject <id> <staffID>
+$ flask hourRecord reject <id> <staff_id>
 ```
 
 ### Update an hour record by ID (any combination of fields)
 ```bash
-$ flask hourRecord update <id> [--studentID <studentID>] [--hours <hours>] [--date <date>] [--status <status>] [--staffID <staffID>]
+$ flask hourRecord update <id> [--student_id <student_id>] [--hours <hours>] [--date <date>] [--status <status>] [--staff_id <staff_id>]
 ```
 
 ### Delete an hour record by ID
@@ -379,11 +379,11 @@ $ flask hourRecord dropTable
 ```
 
 
-# Hour Record Commands
+# Accolade Commands
 
 ### Create an accolade
 ```bash
-$ flask accolade create <title> <milestoneHours>
+$ flask accolade create <title> <milestone_hours>
 ```
 
 ### List all accolades
@@ -393,7 +393,7 @@ $ flask accolade list
 
 ### Update an accolade by ID
 ```bash
-$ flask accolade update <id> [--title <title>] [--milestoneHours <hours>]
+$ flask accolade update <id> [--title <title>] [--milestone_hours <hours>]
 ```
 
 ### Delete an accolade by ID

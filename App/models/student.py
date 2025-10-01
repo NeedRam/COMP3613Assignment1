@@ -30,7 +30,7 @@ class Student(User):
         unlocked_ids = {a.id for a in self.accolades}
         new_accolades = []
         for accolade in all_accolades:
-            if self.totalHours >= accolade.milestoneHours and accolade.id not in unlocked_ids:
+            if self.totalHours >= accolade.milestone_hours and accolade.id not in unlocked_ids:
                 self.accolades.append(accolade)
                 print(f"Congratulations {self.username}! You unlocked the '{accolade.title}' milestone.")
                 new_accolades.append(accolade)

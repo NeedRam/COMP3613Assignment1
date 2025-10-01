@@ -39,11 +39,11 @@ def init():
     rec6 = HourRecord(student_id=816010005, hours=2.0, date=date(2023, 10, 4), status="Pending", staff_id=30010001)
     db.session.add_all([rec1, rec2, rec3, rec4, rec5, rec6])
 
-    accolade1 = Accolade(title="Newcommer", milestoneHours=10)
-    accolade2 = Accolade(title="Beginner", milestoneHours=25)
-    accolade3 = Accolade(title="Rookie", milestoneHours=50)
-    accolade4 = Accolade(title="Novice", milestoneHours=100)
-    accolade5 = Accolade(title="Him", milestoneHours=420)
+    accolade1 = Accolade(title="Newcommer", milestone_hours=10)
+    accolade2 = Accolade(title="Beginner", milestone_hours=25)
+    accolade3 = Accolade(title="Rookie", milestone_hours=50)
+    accolade4 = Accolade(title="Novice", milestone_hours=100)
+    accolade5 = Accolade(title="Him", milestone_hours=420)
     db.session.add_all([accolade1, accolade2, accolade3, accolade4, accolade5])
 
     db.session.commit()
@@ -311,7 +311,7 @@ def view_accolades_command(id):
     table.add_column("Title", style="magenta")
     table.add_column("Milestone Hours", style="green")
     for accolade in accolades:
-        table.add_row(str(accolade.id), accolade.title, str(accolade.milestoneHours))
+        table.add_row(str(accolade.id), accolade.title, str(accolade.milestone_hours))
     console = Console()
     console.print(table)
 
@@ -719,9 +719,9 @@ accolade_cli = AppGroup('accolade', help='Accolade object commands')
 
 @accolade_cli.command("create", help="Creates an accolade")
 @click.argument("title")
-@click.argument("milestoneHours", type=float)
-def create_accolade_command(title, milestoneHours):
-    accolade = Accolade(title=title, milestoneHours=milestoneHours)
+@click.argument("milestone_hours", type=float)
+def create_accolade_command(title, milestone_hours):
+    accolade = Accolade(title=title, milestone_hours=milestone_hours)
     db.session.add(accolade)
     db.session.commit()
     print(f'Accolade {title} created!')
@@ -736,15 +736,15 @@ def list_accolade_command(format):
         table.add_column("Title", style="magenta")
         table.add_column("Milestone Hours", style="green")
         for accolade in accolades:
-            table.add_row(str(accolade.id), accolade.title, str(accolade.milestoneHours))
+            table.add_row(str(accolade.id), accolade.title, str(accolade.milestone_hours))
         console = Console()
         console.print(table)
 
 @accolade_cli.command("update", help="Updates an accolade by ID")
 @click.argument("id", type=int)
 @click.option("--title")
-@click.option("--milestoneHours", type=float)
-def update_accolade_command(id, title, milestoneHours):
+@click.option("--milestone_hours", type=float)
+def update_accolade_command(id, title, milestone_hours):
     accolade = Accolade.query.get(id)
     if not accolade:
         print(f"Accolade with ID {id} not found")
@@ -753,8 +753,8 @@ def update_accolade_command(id, title, milestoneHours):
     if title:
         accolade.title = title
         updated = True
-    if milestoneHours:
-        accolade.milestoneHours = milestoneHours
+    if milestone_hours:
+        accolade.milestone_hours = milestone_hours
         updated = True
     if updated:
         db.session.commit()

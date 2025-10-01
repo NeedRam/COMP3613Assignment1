@@ -10,19 +10,19 @@ class Accolade(db.Model):
     __tablename__ = "accolades"
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    milestoneHours = db.Column(db.Integer, nullable=False)
+    milestone_hours = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(100), nullable=False)
 
-    def __init__(self, title, milestoneHours):
+    def __init__(self, title, milestone_hours):
         self.title = title
-        self.milestoneHours = milestoneHours
+        self.milestone_hours = milestone_hours
 
     def get_json(self):
         return {
             'id': self.id,
             'title': self.title,
-            'milestoneHours': self.milestoneHours
+            'milestone_hours': self.milestone_hours
         }        
 
     def __repr__(self):
-        return f"<ID: {self.id}, Title: {self.title}, Milestone Hours: {self.milestoneHours}>"
+        return f"<ID: {self.id}, Title: {self.title}, Milestone Hours: {self.milestone_hours}>"
