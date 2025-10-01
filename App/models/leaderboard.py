@@ -5,13 +5,13 @@ class Leaderboard(db.Model):
     __tablename__ = "leaderboard"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    studentID = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=False)
     rank = db.Column(db.Integer, nullable=False)
 
     student = db.relationship("Student")
 
-    def __init__(self, studentID, rank):
-        self.studentID = studentID
+    def __init__(self, student_id, rank):
+        self.student_id = student_id
         self.rank = rank
 
     @staticmethod
@@ -27,7 +27,7 @@ class Leaderboard(db.Model):
         # Assign new ranks
         rank = 1
         for student in students:
-            entry = Leaderboard(studentID=student.id, rank=rank)
+            entry = Leaderboard(student_id=student.id, rank=rank)
             db.session.add(entry)
             rank += 1
 
@@ -36,9 +36,9 @@ class Leaderboard(db.Model):
     def get_json(self):
         return {
             'id': self.id,
-            'studentID': self.studentID,
+            'student_id': self.student_id,
             'rank': self.rank
         }
 
     def __repr__(self):
-        return f"<ID: {self.id}, StudentID: {self.studentID}, Rank: {self.rank}>"
+        return f"<ID: {self.id}, student_id: {self.student_id}, Rank: {self.rank}>"

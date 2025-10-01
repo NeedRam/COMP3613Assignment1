@@ -310,6 +310,11 @@ $ flask staff logHours <staffID> <studentID> <hours> <date>
 $ flask staff approveHours <staffID> <recordID>
 ```
 
+### Reject a student's hour record
+```bash
+$ flask staff rejectHours <staffID> <recordID>
+```
+
 ### Manage (edit) a student's hour record
 ```bash
 $ flask staff manageHours <staffID> <recordID> [--hours <hours>] [--date <date>] [--status <status>]

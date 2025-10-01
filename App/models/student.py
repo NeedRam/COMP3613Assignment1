@@ -17,7 +17,7 @@ class Student(User):
         return sum(hr.hours for hr in self.hourRecord if hr.status == "Approved")
 
     def submitHours(self, hours, date):
-        record = HourRecord(studentID=self.id, hours=hours, date=date, status="Pending")
+        record = HourRecord(student_id=self.id, hours=hours, date=date, status="Pending")
         db.session.add(record)
         db.session.commit()
         return record

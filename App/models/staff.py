@@ -11,7 +11,7 @@ class Staff(User):
     hourRecord = db.relationship("HourRecord", back_populates="staff")
 
     def logHours(self, student, hours, date):
-        record = HourRecord(studentID=student.id, staffID=self.id, hours=hours, date=date, status="Approved")
+        record = HourRecord(student_id=student.id, staff_id=self.id, hours=hours, date=date, status="Approved")
         db.session.add(record)
         db.session.commit()
         return record
@@ -19,10 +19,14 @@ class Staff(User):
     def approveHours(self, record):
         record.status = "Approved"
         db.session.commit()
+    
+    def rejectHours(self, record):
+        record.status = "Rejected"
+        db.session.commit()
 
-    def manageHours(self, recordID, hours=None, date=None, status=None):
-        record = HourRecord.query.get(recordID)
-        if not record or record.staffID != self.id:
+    def manageHours(self, record_id, hours=None, date=None, status=None):
+        record = HourRecord.query.get(record_id)
+        if not record or record.staff_id != self.id:
             return None
         if hours is not None:
             record.hours = hours

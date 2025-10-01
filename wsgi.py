@@ -31,12 +31,12 @@ def init():
     Mark = Student(id="816010005", username="Mark", email="mark@example.com", password="ohhi")
     db.session.add_all([Rimmothy, Bartoldamew, Mandoes, Capking, Ladiator, Ohlysith, Kevin, Mark])
 
-    rec1 = HourRecord(studentID=816010001, hours=200000.1, date=date(2023, 10, 5), status="Rejected", staffID=30010001)
-    rec2 = HourRecord(studentID=816010001, hours=0.01, date=date(2023, 10, 1), status="Approved", staffID=30010001)
-    rec3 = HourRecord(studentID=816010002, hours=41.5, date=date(2023, 10, 5), status="Approved", staffID=30010001)
-    rec4 = HourRecord(studentID=816010003, hours=6.8, date=date(2023, 10, 3), status="Approved", staffID=30010002)
-    rec5 = HourRecord(studentID=816010004, hours=33.333, date=date(2023, 10, 2), status="Approved", staffID=30010003)
-    rec6 = HourRecord(studentID=816010005, hours=2.0, date=date(2023, 10, 4), status="Pending", staffID=30010001)
+    rec1 = HourRecord(student_id=816010001, hours=200000.1, date=date(2023, 10, 5), status="Rejected", staff_id=30010001)
+    rec2 = HourRecord(student_id=816010001, hours=0.01, date=date(2023, 10, 1), status="Approved", staff_id=30010001)
+    rec3 = HourRecord(student_id=816010002, hours=41.5, date=date(2023, 10, 5), status="Approved", staff_id=30010001)
+    rec4 = HourRecord(student_id=816010003, hours=6.8, date=date(2023, 10, 3), status="Approved", staff_id=30010002)
+    rec5 = HourRecord(student_id=816010004, hours=33.333, date=date(2023, 10, 2), status="Approved", staff_id=30010003)
+    rec6 = HourRecord(student_id=816010005, hours=2.0, date=date(2023, 10, 4), status="Pending", staff_id=30010001)
     db.session.add_all([rec1, rec2, rec3, rec4, rec5, rec6])
 
     accolade1 = Accolade(title="Newcommer", milestoneHours=10)
@@ -221,7 +221,7 @@ def search_all_students(query):
 def update_student_command(id, username, email, password):
     student = Student.query.get(id)
     if not student:
-        print(f"Student with id {id} not found")
+        print(f"Student with ID {id} not found")
         return
     updated = False
     if username:
@@ -263,7 +263,7 @@ def drop_student_table_command():
 def submit_hours_command(id, hours, date):
     student = Student.query.get(id)
     if not student:
-        print(f"Student with id {id} not found")
+        print(f"Student with ID {id} not found")
         return
     try:
         date_obj = datetime.strptime(date, "%Y-%m-%d").date()
@@ -271,14 +271,14 @@ def submit_hours_command(id, hours, date):
         print("Date must be in YYYY-MM-DD format")
         return
     record = student.submitHours(hours, date_obj)
-    print(f"Submitted {hours} hours for student {id} on {date} (record id: {record.id})")
+    print(f"Submitted {hours} hours for student {id} on {date} (record ID: {record.id})")
 
 @student_cli.command("viewHours", help="Views all hour records for a student")
 @click.argument("id")
 def view_hours_command(id):
     student = Student.query.get(id)
     if not student:
-        print(f"Student with id {id} not found")
+        print(f"Student with ID {id} not found")
         return
     records = student.viewHours()
     if not records:
@@ -291,7 +291,7 @@ def view_hours_command(id):
     table.add_column("Status", style="yellow")
     table.add_column("Staff ID", style="red")
     for record in records:
-        table.add_row(str(record.id), record.date.isoformat(), str(record.hours), record.status, str(record.staffID) if record.staffID else "N/A")
+        table.add_row(str(record.id), record.date.isoformat(), str(record.hours), record.status, str(record.staff_id) if record.staff_id else "N/A")
     console = Console()
     console.print(table)
 
@@ -300,7 +300,7 @@ def view_hours_command(id):
 def view_accolades_command(id):
     student = Student.query.get(id)
     if not student:
-        print(f"Student with id {id} not found")
+        print(f"Student with ID {id} not found")
         return
     accolades = student.viewAccolades()
     if not accolades:
@@ -382,7 +382,7 @@ def search_all_staff(query):
 def update_staff_command(id, username, email, password):
     staff = Staff.query.get(id)
     if not staff:
-        print(f"Staff with id {id} not found")
+        print(f"Staff with ID {id} not found")
         return
     updated = False
     if username:
@@ -405,7 +405,7 @@ def update_staff_command(id, username, email, password):
 def delete_staff_command(id):
     staff = Staff.query.get(id)
     if not staff:
-        print(f"Staff with id {id} not found")
+        print(f"Staff with ID {id} not found")
         return
     db.session.delete(staff)
     db.session.commit()
@@ -418,18 +418,18 @@ def drop_staff_table_command():
     print(f"Deleted {num_deleted} staff members from the staff table")
 
 @staff_cli.command("logHours", help="Logs hours for a student")
-@click.argument("staffID")
-@click.argument("studentID")
+@click.argument("staff_id")
+@click.argument("student_id")
 @click.argument("hours", type=float)
 @click.argument("date")
-def log_hours_command(staffID, studentID, hours, date):
-    staff = Staff.query.get(staffID)
+def log_hours_command(staff_id, student_id, hours, date):
+    staff = Staff.query.get(staff_id)
     if not staff:
-        print(f"Staff with id {staffID} not found")
+        print(f"Staff with ID {staff_id} not found")
         return
-    student = Student.query.get(studentID)
+    student = Student.query.get(student_id)
     if not student:
-        print(f"Student with id {studentID} not found")
+        print(f"Student with ID {student_id} not found")
         return
     try:
         date_obj = datetime.strptime(date, "%Y-%m-%d").date()
@@ -437,36 +437,54 @@ def log_hours_command(staffID, studentID, hours, date):
         print("Date must be in YYYY-MM-DD format")
         return
     record = staff.logHours(student, hours, date_obj)
-    print(f"Logged {hours} hours for student {studentID} on {date} (record ID: {record.id})")
+    print(f"Logged {hours} hours for student {student_id} on {date} (record ID: {record.id})")
 
 @staff_cli.command("approveHours", help="Approves a student's hour record")
-@click.argument("staffID")
-@click.argument("recordID", type=int)
-def approve_hours_command(staffID, recordID):
-    staff = Staff.query.get(staffID)
+@click.argument("staff_id")
+@click.argument("record_id", type=int)
+def approve_hours_command(staff_id, record_id):
+    staff = Staff.query.get(staff_id)
     if not staff:
-        print(f"Staff with id {staffID} not found")
+        print(f"Staff with ID {staff_id} not found")
         return
-    record = HourRecord.query.get(recordID)
+    record = HourRecord.query.get(record_id)
     if not record:
-        print(f"Hour record with id {recordID} not found")
+        print(f"Hour record with ID {record_id} not found")
         return
     if record.status == "Approved":
-        print(f"Hour record {recordID} is already approved")
+        print(f"Hour record {record_id} is already approved")
         return
     staff.approveHours(record)
-    print(f"Hour record {recordID} approved by staff {staffID}")
+    print(f"Hour record {record_id} approved by staff {staff_id}")
+
+@staff_cli.command("rejectHours", help="Rejects a student's hour record")
+@click.argument("staff_id")
+@click.argument("record_id", type=int)
+def reject_hours_command(staff_id, record_id):   
+    staff = Staff.query.get(staff_id)
+    if not staff:
+        print(f"Staff with id {staff_id} not found")
+        return
+    record = HourRecord.query.get(record_id)
+    if not record:
+        print(f"Hour record with id {record_id} not found")
+        return
+    if record.status == "Rejected":
+        print(f"Hour record {record_id} is already rejected")
+        return
+    staff.rejectHours(record)
+    print(f"Hour record {record_id} rejected by staff {staff_id}")
 
 @staff_cli.command("manageHours", help="Manages a student's hour record")
-@click.argument("staffID")
-@click.argument("recordID", type=int)
+@click.argument("staff_id")
+@click.argument("record_id", type=int)
 @click.option("--hours", type=float)
 @click.option("--date")
 @click.option("--status")
-def manage_hours_command(staffID, recordID, hours, date, status):
-    staff = Staff.query.get(staffID)
+def manage_hours_command(staff_id, record_id, hours, date, status):
+    staff = Staff.query.get(staff_id)
     if not staff:
-        print(f"Staff with id {staffID} not found")
+        print(f"Staff with ID {staff_id} not found")
         return
     date_obj = None
     if date:
@@ -475,11 +493,11 @@ def manage_hours_command(staffID, recordID, hours, date, status):
         except ValueError:
             print("Date must be in YYYY-MM-DD format")
             return
-    record = staff.manageHours(recordID, hours=hours, date=date_obj, status=status)
+    record = staff.manageHours(record_id, hours=hours, date=date_obj, status=status)
     if not record:
-        print(f"Hour record with id {recordID} not found or you do not have permission to manage it")
+        print(f"Hour record with ID {record_id} not found")
         return
-    print(f"Hour record {recordID} updated by staff {staffID}")
+    print(f"Hour record {record_id} updated by staff {staff_id}")
 
 
 app.cli.add_command(staff_cli) # add the group to the cli
@@ -490,21 +508,21 @@ Hour Record Commands
 hourRecord_cli = AppGroup('hourRecord', help='hourRecord object commands')
 
 @hourRecord_cli.command("create", help="Creates an hour record")
-@click.argument("studentID")
+@click.argument("student_id")
 @click.argument("hours", type=float)
 @click.argument("date")
 @click.argument("status")
-@click.option("--staffID", default=None)
-def create_hourrecord_command(studentID, hours, date, status, staffID):
+@click.option("--staff_id", default=None)
+def create_hourrecord_command(student_id, hours, date, status, staff_id):
     try:
         date_obj = datetime.strptime(date, "%Y-%m-%d").date()
     except ValueError:
         print("Date must be in YYYY-MM-DD format")
         return
-    record = HourRecord(studentID=studentID, hours=hours, date=date_obj, status=status, staffID=staffID)
+    record = HourRecord(student_id=student_id, hours=hours, date=date_obj, status=status, staff_id=staff_id)
     db.session.add(record)
     db.session.commit()
-    print(f'Hour record {record.id} created for student {studentID}!')
+    print(f'Hour record {record.id} created for student {student_id}!')
 
 @hourRecord_cli.command("list", help="Lists hour records in the database")
 @click.argument("format", default="string")
@@ -519,43 +537,43 @@ def list_hourrecord_command(format):
         table.add_column("Status", style="red")
         table.add_column("Staff ID", style="blue")
         for record in records:
-            table.add_row(str(record.id), str(record.studentID), record.date.isoformat(), str(record.hours), record.status, str(record.staffID) if record.staffID else "N/A")
+            table.add_row(str(record.id), str(record.student_id), record.date.isoformat(), str(record.hours), record.status, str(record.staff_id) if record.staff_id else "N/A")
         console = Console()
         console.print(table)
 
 @hourRecord_cli.command("searchByStudentID", help="Searches hour records by student ID")
-@click.argument("studentID")
-def search_hourrecord_by_student_command(studentID):    
-    records = db.session.scalars(db.select(HourRecord).where(HourRecord.studentID == studentID)).all()
+@click.argument("student_id")
+def search_hourrecord_by_student_command(student_id):    
+    records = db.session.scalars(db.select(HourRecord).where(HourRecord.student_id == student_id)).all()
     if not records:
-        print(f"No hour records found for student ID {studentID}")
+        print(f"No hour records found for student ID {student_id}")
         return
-    table = Table(title=f"Hour Records for Student {studentID}")
+    table = Table(title=f"Hour Records for Student {student_id}")
     table.add_column("ID", style="cyan", no_wrap=True)
     table.add_column("Date", style="magenta")
     table.add_column("Hours", style="green")
     table.add_column("Status", style="yellow")
     table.add_column("Staff ID", style="red")
     for record in records:
-        table.add_row(str(record.id), record.date.isoformat(), str(record.hours), record.status, str(record.staffID) if record.staffID else "N/A")
+        table.add_row(str(record.id), record.date.isoformat(), str(record.hours), record.status, str(record.staff_id) if record.staff_id else "N/A")
     console = Console()
     console.print(table)
 
 @hourRecord_cli.command("searchByStaffID", help="Searches hour records by staff ID")
-@click.argument("staffID")
-def search_hourrecord_by_staff_command(staffID):    
-    records = db.session.scalars(db.select(HourRecord).where(HourRecord.staffID == staffID)).all()
+@click.argument("staff_id")
+def search_hourrecord_by_staff_command(staff_id):    
+    records = db.session.scalars(db.select(HourRecord).where(HourRecord.staff_id == staff_id)).all()
     if not records:
-        print(f"No hour records found for staff ID {staffID}")
+        print(f"No hour records found for staff ID {staff_id}")
         return
-    table = Table(title=f"Hour Records managed by Staff {staffID}")
+    table = Table(title=f"Hour Records managed by Staff {staff_id}")
     table.add_column("ID", style="cyan", no_wrap=True)
     table.add_column("Student ID", style="magenta")
     table.add_column("Date", style="green")
     table.add_column("Hours", style="yellow")
     table.add_column("Status", style="red")
     for record in records:
-        table.add_row(str(record.id), str(record.studentID), record.date.isoformat(), str(record.hours), record.status)
+        table.add_row(str(record.id), str(record.student_id), record.date.isoformat(), str(record.hours), record.status)
     console = Console()
     console.print(table)
 
@@ -578,7 +596,7 @@ def search_hourrecord_by_date_command(date):
     table.add_column("Status", style="red")
     table.add_column("Staff ID", style="blue")
     for record in records:
-        table.add_row(str(record.id), str(record.studentID), str(record.hours), record.status, str(record.staffID) if record.staffID else "N/A")
+        table.add_row(str(record.id), str(record.student_id), str(record.hours), record.status, str(record.staff_id) if record.staff_id else "N/A")
     console = Console()
     console.print(table)
 
@@ -596,17 +614,17 @@ def search_hourrecord_by_status_command(status):
     table.add_column("Hours", style="yellow")
     table.add_column("Staff ID", style="blue")
     for record in records:
-        table.add_row(str(record.id), str(record.studentID), record.date.isoformat(), str(record.hours), str(record.staffID) if record.staffID else "N/A")
+        table.add_row(str(record.id), str(record.student_id), record.date.isoformat(), str(record.hours), str(record.staff_id) if record.staff_id else "N/A")
     console = Console()
     console.print(table)
 
 @hourRecord_cli.command("approve", help="Approves an hour record by ID")
 @click.argument("id", type=int)
-@click.argument("staffID")
-def approve_hourrecord_command(id, staffID):
-    staff = Staff.query.get(staffID)
+@click.argument("staff_id")
+def approve_hourrecord_command(id, staff_id):
+    staff = Staff.query.get(staff_id)
     if not staff:
-        print(f"Staff with id {staffID} not found")
+        print(f"Staff with ID {staff_id} not found")
         return
     record = HourRecord.query.get(id)
     if not record:
@@ -616,15 +634,15 @@ def approve_hourrecord_command(id, staffID):
         print(f"Hour record {id} is already approved")
         return
     staff.approveHours(record)
-    print(f"Hour record {id} approved by staff {staffID}")
+    print(f"Hour record {id} approved by staff {staff_id}")
 
 @hourRecord_cli.command("reject", help="Rejects an hour record by ID")
 @click.argument("id", type=int)
-@click.argument("staffID")
-def reject_hourrecord_command(id, staffID):   
-    staff = Staff.query.get(staffID)
+@click.argument("staff_id")
+def reject_hourrecord_command(id, staff_id):   
+    staff = Staff.query.get(staff_id)
     if not staff:
-        print(f"Staff with id {staffID} not found")
+        print(f"Staff with ID {staff_id} not found")
         return
     record = HourRecord.query.get(id)
     if not record:
@@ -634,23 +652,23 @@ def reject_hourrecord_command(id, staffID):
         print(f"Hour record {id} is already rejected")
         return
     staff.rejectHours(record)
-    print(f"Hour record {id} rejected by staff {staffID}")
+    print(f"Hour record {id} rejected by staff {staff_id}")
 
 @hourRecord_cli.command("update", help="Updates an hour record by ID")
 @click.argument("id", type=int)
-@click.option("--studentID", type=int)
+@click.option("--student_id", type=int)
 @click.option("--hours", type=float)
 @click.option("--date")
 @click.option("--status")
-@click.option("--staffID", type=int)
-def update_hourrecord_command(id, studentID, hours, date, status, staffID):
+@click.option("--staff_id", type=int)
+def update_hourrecord_command(id, student_id, hours, date, status, staff_id):
     record = HourRecord.query.get(id)
     if not record:
-        print(f"Hour record with id {id} not found")
+        print(f"Hour record with ID {id} not found")
         return
     updated = False
-    if studentID:
-        record.studentID = studentID
+    if student_id:
+        record.student_id = student_id
         updated = True
     if hours:
         record.hours = hours
@@ -666,8 +684,8 @@ def update_hourrecord_command(id, studentID, hours, date, status, staffID):
     if status:
         record.status = status
         updated = True
-    if staffID:
-        record.staffID = staffID
+    if staff_id:
+        record.staff_id = staff_id
         updated = True
     if updated:
         db.session.commit()
@@ -680,7 +698,7 @@ def update_hourrecord_command(id, studentID, hours, date, status, staffID):
 def delete_hourrecord_command(id):
     record = HourRecord.query.get(id)
     if not record:
-        print(f"Hour record with id {id} not found")
+        print(f"Hour record with ID {id} not found")
         return
     db.session.delete(record)
     db.session.commit()
@@ -729,7 +747,7 @@ def list_accolade_command(format):
 def update_accolade_command(id, title, milestoneHours):
     accolade = Accolade.query.get(id)
     if not accolade:
-        print(f"Accolade with id {id} not found")
+        print(f"Accolade with ID {id} not found")
         return
     updated = False
     if title:
@@ -749,7 +767,7 @@ def update_accolade_command(id, title, milestoneHours):
 def delete_accolade_command(id):
     accolade = Accolade.query.get(id)
     if not accolade:
-        print(f"Accolade with id {id} not found")
+        print(f"Accolade with ID {id} not found")
         return
     db.session.delete(accolade)
     db.session.commit()
@@ -779,9 +797,9 @@ def list_leaderboard_command(format):
         table.add_column("Username", style="green")
         table.add_column("Total Hours", style="yellow")
         for entry in leaderboard:
-            student = Student.query.get(entry.studentID)
+            student = Student.query.get(entry.student_id)
             username = student.username if student else "N/A"
-            table.add_row(str(entry.rank), str(entry.studentID), username, str(entry.totalHours))
+            table.add_row(str(entry.rank), str(entry.student_id), username, str(entry.totalHours))
         console = Console()
         console.print(table)
 
@@ -796,10 +814,10 @@ def search_all_leaderboard(query):
     leaderboard = db.session.scalars(db.select(Leaderboard)).all()
     results = []
     for entry in leaderboard:
-        student = Student.query.get(entry.studentID)
+        student = Student.query.get(entry.student_id)
         username = student.username if student else ""
         if (
-            query.lower() in str(entry.studentID).lower()
+            query.lower() in str(entry.student_id).lower()
             or query.lower() in username.lower()
         ):
             results.append((entry, username))
@@ -809,7 +827,7 @@ def search_all_leaderboard(query):
     table.add_column("Username", style="green")
     table.add_column("Total Hours", style="yellow")
     for entry, username in results:
-        table.add_row(str(entry.rank), str(entry.studentID), username, str(entry.totalHours))
+        table.add_row(str(entry.rank), str(entry.student_id), username, str(entry.totalHours))
     console = Console()
     if results:
         console.print(table)
